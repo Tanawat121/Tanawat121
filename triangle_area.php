@@ -21,6 +21,12 @@
         <div class="actions">
             <a href="triangle_area_form.php" class="btn">กลับไปหน้าแรก</a>
         </div>
+        <?php
+        function triangleArea($h,$w){
+            $a = 0.5 * $h * $w; //คำนวณพื้นที่ 1/2*ฐ*ส
+            return $a;
+        }
+        ?>
     </div>
 </body>
 </html>
