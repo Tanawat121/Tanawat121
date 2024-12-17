@@ -92,32 +92,44 @@
         </form>
 
         <?php
+        // ฟังก์ชันคำนวณ BMI
+        function calculateBMI($weight, $height) {
+            // แปลงส่วนสูงจากเซนติเมตรเป็นเมตร
+            $heightInMeters = $height / 100;
+            // คำนวณค่า BMI
+            $bmi = $weight / ($heightInMeters * $heightInMeters);
+            // คืนค่าผลลัพธ์ BMI โดยปัดเป็นทศนิยม 2 ตำแหน่ง
+            return round($bmi, 2);
+        }
+
+        // ฟังก์ชันแปลผล BMI
+        function interpretBMI($bmi) {
+            // แปลผลตามค่า BMI
+            if ($bmi < 18.5) {
+                return ["Underweight", "คุณควรกินอาหารที่มีสารอาหารครบถ้วนเพื่อเพิ่มน้ำหนัก."];
+            } elseif ($bmi < 24.9) {
+                return ["Normal weight", "ยอดเยี่ยม! รักษารูปร่างและสุขภาพให้ดีต่อไป."];
+            } elseif ($bmi < 29.9) {
+                return ["Overweight", "คุณควรเริ่มออกกำลังกายและควบคุมอาหาร."];
+            } else {
+                return ["Obesity", "คุณควรปรึกษาแพทย์เพื่อคำแนะนำเพิ่มเติม."];
+            }
+        }
+
+        // เช็คว่าเป็นการส่งข้อมูลแบบ POST หรือไม่
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // รับข้อมูลจากฟอร์ม
             $firstname = htmlspecialchars($_POST['firstname']);
             $lastname = htmlspecialchars($_POST['lastname']);
             $age = intval($_POST['age']);
             $weight = floatval($_POST['weight']);
             $height = floatval($_POST['height']);
 
-            // คำนวณค่า BMI
-            $heightInMeters = $height / 100;
-            $bmi = $weight / ($heightInMeters * $heightInMeters);
-            $bmi = round($bmi, 2);
+            // คำนวณค่า BMI โดยเรียกใช้ฟังก์ชัน calculateBMI
+            $bmi = calculateBMI($weight, $height);
 
-            // แปลผลค่า BMI
-            if ($bmi < 18.5) {
-                $category = "Underweight";
-                $advice = "คุณควรกินอาหารที่มีสารอาหารครบถ้วนเพื่อเพิ่มน้ำหนัก.";
-            } elseif ($bmi < 24.9) {
-                $category = "Normal weight";
-                $advice = "ยอดเยี่ยม! รักษารูปร่างและสุขภาพให้ดีต่อไป.";
-            } elseif ($bmi < 29.9) {
-                $category = "Overweight";
-                $advice = "คุณควรเริ่มออกกำลังกายและควบคุมอาหาร.";
-            } else {
-                $category = "Obesity";
-                $advice = "คุณควรปรึกษาแพทย์เพื่อคำแนะนำเพิ่มเติม.";
-            }
+            // แปลผล BMI โดยเรียกใช้ฟังก์ชัน interpretBMI
+            list($category, $advice) = interpretBMI($bmi);
 
             // แสดงผลลัพธ์
             echo "<div class='result'>";
