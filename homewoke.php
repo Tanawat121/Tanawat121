@@ -72,8 +72,9 @@
         <label for="weight">น้ำหนัก (kg):</label>
         <input type="number" step="0.1" id="weight" name="weight" required>
         
-        <label for="height">ส่วนสูง (m):</label>
-        <input type="number" step="0.01" id="height" name="height" required>
+        
+<label for="height">ส่วนสูง (cm):</label>
+        <input type="number" step="1" id="height" name="height" required>
         
         <input type="submit" value="คำนวณ BMI">
     </form>
@@ -87,8 +88,11 @@
         $weight = $_POST['weight'];
         $height = $_POST['height'];
 
-        // Calculate BMI by calling the function with weight and height
-        $bmi = bmiConvert($weight, $height);
+        // Convert height from cm to meters
+        $heightInMeters = $height / 100;
+
+        // Calculate BMI by calling the function with weight and converted height
+        $bmi = bmiConvert($weight, $heightInMeters);
         
         // Get BMI status and recommendation
         list($bmi_status, $recommendation) = bmiToText($bmi);
@@ -98,7 +102,7 @@
                 <p>ชื่อ: $first_name $last_name</p>
                 <p>อายุ: $age ปี</p>
                 <p>น้ำหนัก: $weight kg</p>
-                <p>ส่วนสูง: $height m</p>
+                <p>ส่วนสูง: $height cm</p>
                 <p><strong>BMI: </strong>" . number_format($bmi, 2) . "</p>
                 <p><strong>สถานะ BMI: </strong>$bmi_status</p>
                 <p><strong>คำแนะนำ: </strong>$recommendation</p>
@@ -130,8 +134,6 @@
         return [$bmi_status, $recommendation];
     }
 ?>
-
-
 
 </div>
 
