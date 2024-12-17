@@ -1,146 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BMI Calculator</title>
+    <title>โปรแกรมคำนวณ BMI</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             margin: 0;
             padding: 0;
-            background: #eaf6f6;
         }
         .container {
-            max-width: 600px;
+            width: 50%;
             margin: 50px auto;
-            background: #ffffff;
-            border-radius: 10px;
+            background-color: #ffffff;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: #333;
         }
-        .form-group {
-            margin-bottom: 15px;
+        label {
+            font-size: 16px;
+            color: #555;
         }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #34495e;
-        }
-        .form-group input {
+        input[type="text"], input[type="number"], input[type="submit"] {
             width: 100%;
             padding: 10px;
-            border: 1px solid #bdc3c7;
+            margin: 10px 0 20px 0;
+            border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 14px;
         }
-        .btn {
-            width: 100%;
-            padding: 10px;
-            background: #1abc9c;
-            color: #ffffff;
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
             cursor: pointer;
-        }
-        .btn:hover {
-            background: #16a085;
         }
         .result {
             margin-top: 20px;
+            background-color: #f8f8f8;
             padding: 15px;
             border-radius: 5px;
-            background: #ecf0f1;
-            color: #2c3e50;
+            border: 1px solid #ddd;
         }
         .result p {
-            margin: 0 0 10px;
+            font-size: 16px;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>BMI Calculator</h1>
-        <form method="POST" action="homewoke.php">
-            <div class="form-group">
-                <label for="firstname">First Name:</label>
-                <input type="text" id="firstname" name="firstname" required>
-            </div>
-            <div class="form-group">
-                <label for="lastname">Last Name:</label>
-                <input type="text" id="lastname" name="lastname" required>
-            </div>
-            <div class="form-group">
-                <label for="age">Age:</label>
-                <input type="number" id="age" name="age" min="1" required>
-            </div>
-            <div class="form-group">
-                <label for="weight">Weight (kg):</label>
-                <input type="number" id="weight" name="weight" min="1" step="0.1" required>
-            </div>
-            <div class="form-group">
-                <label for="height">Height (cm):</label>
-                <input type="number" id="height" name="height" min="1" step="0.1" required>
-            </div>
-            <button type="submit" class="btn">Calculate BMI</button>
-        </form>
 
-        <?php
-        // ฟังก์ชันคำนวณ BMI
-        function calculateBMI($weight, $height) {
-            // แปลงส่วนสูงจากเซนติเมตรเป็นเมตร
-            $heightInMeters = $height / 100;
-            // คำนวณค่า BMI
-            $bmi = $weight / ($heightInMeters * $heightInMeters);
-            // คืนค่าผลลัพธ์ BMI โดยปัดเป็นทศนิยม 2 ตำแหน่ง
-            return round($bmi, 2);
+<div class="container">
+    <h1>โปรแกรมคำนวณ BMI</h1>
+
+    <form action="" method="POST">
+        <label for="first_name">ชื่อ:</label>
+        <input type="text" id="first_name" name="first_name" required>
+        
+        <label for="last_name">นามสกุล:</label>
+        <input type="text" id="last_name" name="last_name" required>
+        
+        <label for="age">อายุ:</label>
+        <input type="number" id="age" name="age" required>
+        
+        <label for="weight">น้ำหนัก (kg):</label>
+        <input type="number" step="0.1" id="weight" name="weight" required>
+        
+        <label for="height">ส่วนสูง (m):</label>
+        <input type="number" step="0.01" id="height" name="height" required>
+        
+        <input type="submit" value="คำนวณ BMI">
+    </form>
+
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
+        $age = $_POST['age'];
+        $weight = $_POST['weight'];
+        $height = $_POST['height'];
+
+        // Calculate BMI by calling the function with weight and height
+        $bmi = bmiConvert($weight, $height);
+        
+        // Get BMI status and recommendation
+        list($bmi_status, $recommendation) = bmiToText($bmi);
+
+        echo "<div class='result'>
+                <p><strong>ข้อมูลผู้ใช้:</strong></p>
+                <p>ชื่อ: $first_name $last_name</p>
+                <p>อายุ: $age ปี</p>
+                <p>น้ำหนัก: $weight kg</p>
+                <p>ส่วนสูง: $height m</p>
+                <p><strong>BMI: </strong>" . number_format($bmi, 2) . "</p>
+                <p><strong>สถานะ BMI: </strong>$bmi_status</p>
+                <p><strong>คำแนะนำ: </strong>$recommendation</p>
+              </div>";
+    }
+
+    // Function to calculate BMI
+    function bmiConvert($weight, $height){
+        return $weight / ($height * $height);
+    }
+
+    // Function to return BMI status and recommendation
+    function bmiToText($bmi){
+        if ($bmi < 18.5) {
+            $bmi_status = "น้ำหนักน้อย";
+            $recommendation = "ควรเพิ่มน้ำหนักเพื่อสุขภาพที่ดี";
+        } elseif ($bmi >= 18.5 && $bmi <= 24.9) {
+            $bmi_status = "น้ำหนักปกติ";
+            $recommendation = "สุขภาพดี รักษาน้ำหนักนี้ไว้";
+        } elseif ($bmi >= 25 && $bmi <= 29.9) {
+            $bmi_status = "น้ำหนักเกิน";
+            $recommendation = "ควรลดน้ำหนักเพื่อสุขภาพที่ดี";
+        } else {
+            $bmi_status = "อ้วน";
+            $recommendation = "ควรลดน้ำหนักและปรึกษาแพทย์";
         }
 
-        // ฟังก์ชันแปลผล BMI
-        function interpretBMI($bmi) {
-            // แปลผลตามค่า BMI
-            if ($bmi < 18.5) {
-                return ["Underweight", "คุณควรกินอาหารที่มีสารอาหารครบถ้วนเพื่อเพิ่มน้ำหนัก."];
-            } elseif ($bmi < 24.9) {
-                return ["Normal weight", "ยอดเยี่ยม! รักษารูปร่างและสุขภาพให้ดีต่อไป."];
-            } elseif ($bmi < 29.9) {
-                return ["Overweight", "คุณควรเริ่มออกกำลังกายและควบคุมอาหาร."];
-            } else {
-                return ["Obesity", "คุณควรปรึกษาแพทย์เพื่อคำแนะนำเพิ่มเติม."];
-            }
-        }
+        // Return the status and recommendation
+        return [$bmi_status, $recommendation];
+    }
+?>
 
-        // เช็คว่าเป็นการส่งข้อมูลแบบ POST หรือไม่
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // รับข้อมูลจากฟอร์ม
-            $firstname = htmlspecialchars($_POST['firstname']);
-            $lastname = htmlspecialchars($_POST['lastname']);
-            $age = intval($_POST['age']);
-            $weight = floatval($_POST['weight']);
-            $height = floatval($_POST['height']);
 
-            // คำนวณค่า BMI โดยเรียกใช้ฟังก์ชัน calculateBMI
-            $bmi = calculateBMI($weight, $height);
 
-            // แปลผล BMI โดยเรียกใช้ฟังก์ชัน interpretBMI
-            list($category, $advice) = interpretBMI($bmi);
+</div>
 
-            // แสดงผลลัพธ์
-            echo "<div class='result'>";
-            echo "<h2>ผลลัพธ์ BMI</h2>";
-            echo "<p><strong>ชื่อ-นามสกุล:</strong> $firstname $lastname</p>";
-            echo "<p><strong>อายุ:</strong> $age ปี</p>";
-            echo "<p><strong>BMI:</strong> $bmi ($category)</p>";
-            echo "<p><strong>คำแนะนำ:</strong> $advice</p>";
-            echo "</div>";
-        }
-        ?>
-    </div>
 </body>
 </html>
